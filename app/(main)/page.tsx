@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 import { LuCalendarDays, LuMapPinCheck } from "react-icons/lu";
 import { TbBuildingEstate } from 'react-icons/tb'
@@ -20,8 +21,8 @@ export default function LandingPage() {
         </div>
 
         <div className="flex gap-4 items-center">
-          <Button className="bg-[#431b07] text-[#fffaf0]"><LuCalendarDays className="inline"/> See Events</Button>
-          <Button className='bg-[#FEE0AA] text-[#431b07]'><LuMapPinCheck className="inline"/> Browse Spots</Button>
+          <Link href='/events'><Button className="bg-[#431b07] text-[#fffaf0]"><LuCalendarDays className="inline"/> See Events</Button></Link>
+          <Link href='/spots'><Button className='bg-[#FEE0AA] text-[#431b07]'><LuMapPinCheck className="inline"/> Browse Spots</Button></Link>
         </div>
 
 

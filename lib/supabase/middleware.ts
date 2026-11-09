@@ -39,15 +39,13 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims
 
   const pathname = request.nextUrl.pathname
-  const publicPaths = ['/', '/spots', '/events']
-
   const isPublic =
-    publicPaths.includes(pathname) ||
-    pathname.startsWith('/login') ||
-    pathname.startsWith('/auth') ||
-    // the OAuth consent route sends unauthenticated visitors to the login page
-    // itself, so that it can preserve the authorization in the `next` parameter
-    pathname === '/oauth/consent'
+  pathname === '/' ||
+  pathname.startsWith('/spots') ||    // matches /spots, /spots/123, /spots/abc, etc.
+  pathname.startsWith('/events') ||   // matches /events, /events/456, etc.
+  pathname.startsWith('/login') ||
+  pathname.startsWith('/auth') ||
+  pathname === '/oauth/consent'
 
   if (!user && !isPublic) {
     // no user, potentially respond by redirecting the user to the login page

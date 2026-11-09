@@ -53,7 +53,7 @@ const SpotPage = () => {
                     <div className='bg-white/60 p-8 rounded-[25px]'>
                         <h2 className='text-2xl font-bold tracking-tight text-gray-600'>About This Spot</h2>
 
-                        <p className='text-gray-500 text-sm'>{spot?.spotDescription}</p>
+                        <p className='text-gray-500 font-medium mt-2'>{spot?.spotDescription}</p>
 
                     </div>
 
