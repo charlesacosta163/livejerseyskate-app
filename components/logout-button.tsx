@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
+import { LuLogOut } from 'react-icons/lu'
 
 export function LogoutButton() {
   const router = useRouter()
@@ -16,5 +16,13 @@ export function LogoutButton() {
     router.refresh()
   }
 
-  return <Button onClick={logout}>Sign out</Button>
+  return (
+    <button 
+      onClick={logout}
+      className='flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full'
+    >
+      <LuLogOut size={16}/>
+      <span>Sign Out</span>
+    </button>
+  )
 }

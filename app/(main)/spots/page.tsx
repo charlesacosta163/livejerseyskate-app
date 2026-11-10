@@ -1,18 +1,28 @@
 import React from "react";
-
 import { spotsData, spotCategories } from "@/lib/data";
-
 import { LuFilter } from "react-icons/lu";
 import { TbBinoculars } from "react-icons/tb";
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import SpotFilters from "@/components/main/spot-filters";
 
+interface SpotsPageProps {
+  searchParams: Promise<{ filter?: string | string[] }>;
+}
 
+const SpotsPage = async ({ searchParams }: SpotsPageProps) => {
+  const params = await searchParams;
+  const activeFilters = params.filter 
+    ? Array.isArray(params.filter) 
+      ? params.filter 
+      : [params.filter]
+    : [];
 
-
-const SpotsPage = () => {
+  // Filter spots based on active filters (server-side)
+  const filteredSpots = activeFilters.length > 0
+    ? spotsData.filter(spot => activeFilters.includes(spot.spotType.toLowerCase()))
+    : spotsData;
   return (
     <div className="flex flex-col gap-4">
       <section id="header" className="flex gap-4 flex-col items-center">
@@ -30,34 +40,16 @@ const SpotsPage = () => {
           </Button>
         </div>
 
-        {/* Spot Categories */}
-        <div
-          id="selections"
-          className="flex gap-1 p-4 bg-white/60 rounded-2xl w-full overflow-x-auto
-                sm:[&>div]:min-w-[155px]
-                [&>div]:min-w-[75px]
-            "
-        >
-        {spotCategories.map(category => {
-            return(
-            <div key={category.key} className="flex flex-col items-center p-2 rounded-[20px] hover:bg-gray-100">
-                {category.icon}
-                <span className="text-xs font-medium"> {category.key}</span>
-            </div>
-
-            )
-        })}
-
-        
-        </div>
+        {/* Filters for Spots*/}
+        <SpotFilters />
 
         <main className="w-full flex flex-col gap-4">
           <h1 className="text-3xl font-black tracking-tighter text-[#9A4312]">
-            Results (3)
+            Results ({filteredSpots.length})
           </h1>
 
           <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {spotsData.map((spot) => {
+            {filteredSpots.map((spot) => {
               return (
                 <div
                 key={spot.id}

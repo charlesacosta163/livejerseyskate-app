@@ -8,3 +8,12 @@ export async function isLoggedIn(): Promise<boolean> {
   }
   return data.user !== null
 }
+
+export async function getCurrentUser() {
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.getUser()
+  if (error) {
+    return null
+  }
+  return data.user
+}

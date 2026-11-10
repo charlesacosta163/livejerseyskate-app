@@ -17,7 +17,7 @@ const Navbar = () => {
                 <section className="flex gap-4 items-center text-sm font-medium">
                     <Link href='/spots'><LuMapPinCheck className='inline'/> Spots</Link>
                     <Link href='/events'><LuCalendarDays className='inline'/> Events</Link>
-                    {/* <LoginDropdownButton /> */}
+                    <LoginDropdownButton />
                 </section>
             </nav>
         </header>

@@ -1,27 +1,61 @@
 import React from 'react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
 import { Button } from '@/components/ui/button'
 import { LuBookUser, LuSquareCheckBig, LuSettings, LuUser, LuSpeech } from 'react-icons/lu'
-import { LogoutButton } from '@/components/logout-button'
+import { LogoutButton } from '@/components/logout-button'   
 
-const AccountPage = () => {
+import { formatToShortDate } from '@/lib/utils'
+import { getCurrentUser } from '@/lib/supabase/user-actions'
+
+
+const AccountPage = async () => {
+
+    const currentUser = await getCurrentUser()
+
+    if (!currentUser) {
+        redirect('/auth/login')
+    }
+
+
   return (
-    <div className='flex gap-4 items-start'>
+    <div className='flex flex-col gap-4'>
 
+        {/* Mobile horizontal tabs */}
+        <nav className='flex md:hidden gap-2 overflow-x-auto pb-2 px-1'>
+            <Link 
+                href="/account" 
+                className='flex items-center gap-2 px-4 py-2 bg-[#9A4312] text-white rounded-lg whitespace-nowrap text-sm font-semibold'
+            >
+                <LuBookUser size={16} /> Account
+            </Link>
+            <Link 
+                href="/account/submissions" 
+                className='flex items-center gap-2 px-4 py-2 bg-white rounded-lg whitespace-nowrap text-sm font-semibold hover:bg-gray-100'
+            >
+                <LuSquareCheckBig size={16} /> Submissions
+            </Link>
+            <Link 
+                href="/account/settings" 
+                className='flex items-center gap-2 px-4 py-2 bg-white rounded-lg whitespace-nowrap text-sm font-semibold hover:bg-gray-100'
+            >
+                <LuSettings size={16} /> Settings
+            </Link>
+        </nav>
 
-        <aside id="sidebar-nav" className='w-[200px]'>
+        <div className='flex md:flex-row flex-col gap-4 items-start'>
 
-            <nav className='flex flex-col gap-2'>
-                
-                <Link href="/account" className='text-lg font-semibold tracking-tight'><LuBookUser className='inline' /> Account</Link>
-                <Link href="/account/submissions" className='text-lg font-semibold tracking-tight'><LuSquareCheckBig className='inline' /> Submissions</Link>
-                <Link href="/account/settings" className='text-lg font-semibold tracking-tight'><LuSettings className='inline' /> Settings</Link>
+            {/* Desktop sidebar */}
+            <aside id="sidebar-nav" className='hidden md:block w-[200px]'>
+                <nav className='flex flex-col gap-2'>
+                    <Link href="/account" className='text-lg font-semibold tracking-tight'><LuBookUser className='inline' /> Account</Link>
+                    <Link href="/account/submissions" className='text-lg font-semibold tracking-tight'><LuSquareCheckBig className='inline' /> Submissions</Link>
+                    <Link href="/account/settings" className='text-lg font-semibold tracking-tight'><LuSettings className='inline' /> Settings</Link>
+                </nav>
+            </aside>
 
-            </nav>
-
-        </aside>
-
-        <main className='flex-1 flex flex-col gap-4'>
+            <main className='flex-1 flex flex-col gap-4 w-full'>
             
             <section id='#name' className='flex justify-between gap-4 items-center p-4 bg-white rounded-lg'>
 
@@ -33,7 +67,7 @@ const AccountPage = () => {
                     </span>
                 </div>
 
-                <LogoutButton />
+                <span className="self-end"><LogoutButton /></span>
 
             </section>
 
@@ -44,9 +78,11 @@ const AccountPage = () => {
                 </p>
                 <Button variant='outline' className='mt-4'>Edit Profile</Button>
             </section>
-        </main>
 
+            <span className='text-xs text-gray-400 font-semibold'>Account created on {formatToShortDate(currentUser?.created_at)}</span>
+            </main>
 
+        </div>
     </div>
   )
 }
