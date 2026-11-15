@@ -4,7 +4,7 @@ import { LuArrowLeft, LuMapPin, LuUser } from 'react-icons/lu'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { spotCategories } from '@/lib/data'
+import { spotCategories } from '@/lib/spots-data'
 
 interface SpotPageProps {
   params: Promise<{ id: string }>

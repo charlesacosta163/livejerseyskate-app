@@ -1,6 +1,6 @@
 import { getAllSpotsForAdmin } from '@/lib/actions'
 import { Badge } from '@/components/ui/badge'
-import { spotCategories } from '@/lib/data'
+import { spotCategories } from '@/lib/spots-data'
 import SpotModerationCard from '@/components/admin/spot-moderation-card'
 
 export default async function SpotsModeration() {

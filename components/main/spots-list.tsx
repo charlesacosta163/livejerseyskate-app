@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { TbBinoculars, TbBrandGoogleMaps } from 'react-icons/tb'
 import { FaGoogle } from 'react-icons/fa'
 import { LuSearch } from 'react-icons/lu'
-import { spotCategories } from '@/lib/data'
+import { spotCategories } from '@/lib/spots-data'
 import type { SkateSpot } from '@/lib/types'
 
 interface SpotsListProps {

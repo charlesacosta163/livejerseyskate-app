@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { spotCategories } from '@/lib/data';
+import { spotCategories } from '@/lib/spots-data';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LuX } from "react-icons/lu";

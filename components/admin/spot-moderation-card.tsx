@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { LuCheck, LuX, LuMapPin, LuUser, LuExternalLink, LuTriangleAlert } from 'react-icons/lu'
 import { approveSkateSpot, rejectSkateSpot } from '@/lib/actions'
-import { spotCategories } from '@/lib/data'
+import { spotCategories } from '@/lib/spots-data'
 import type { SkateSpot } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'

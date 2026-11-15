@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { LuExternalLink, LuMapPin, LuPencil, LuBookUser, LuSquareCheckBig, LuSettings } from 'react-icons/lu'
-import { spotCategories } from '@/lib/data'
+import { spotCategories } from '@/lib/spots-data'
 import AccountNavTabs from '@/components/main/account-nav-tabs'
 import DeleteSpotButton from '@/components/delete-spot-button'
 
