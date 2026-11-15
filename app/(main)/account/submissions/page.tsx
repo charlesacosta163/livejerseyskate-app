@@ -84,6 +84,22 @@ const SubmissionsPage = async () => {
                   <p className='text-sm text-gray-600 line-clamp-2'>{spot.description}</p>
 
                   <div className='flex flex-wrap gap-2 items-center'>
+                    {/* Status Badge */}
+                    {spot.status === 'pending' && (
+                      <Badge className='bg-orange-500 text-white text-xs'>
+                        ⏳ Pending Review
+                      </Badge>
+                    )}
+                    {spot.status === 'approved' && (
+                      <Badge className='bg-green-500 text-white text-xs'>
+                        ✓ Approved
+                      </Badge>
+                    )}
+                    {spot.status === 'rejected' && (
+                      <Badge variant='destructive' className='text-xs'>
+                        ✗ Rejected
+                      </Badge>
+                    )}
                     <Badge className='bg-amber-800 text-white text-xs'>
                       Bust: {spot.bust_level}/5
                     </Badge>

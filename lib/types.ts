@@ -19,6 +19,7 @@ export interface SkateSpot {
   bust_level: number
   google_maps_url: string
   user_id: string
+  status: 'pending' | 'approved' | 'rejected'
   user_profiles?: {
     username: string
   }

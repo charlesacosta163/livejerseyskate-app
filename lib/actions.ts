@@ -36,6 +36,7 @@ export async function submitNewSkateSpot(formData: FormData) {
         spot_type: spotType,
         bust_level: bustLevel,
         google_maps_url: googleMapsUrl,
+        status: 'pending',
         user_id: user.id
       }
     ])
@@ -98,10 +99,54 @@ export async function getAllSkateSpots(): Promise<SkateSpot[]> {
         username
       )
     `)
+    .eq('status', 'approved')
     .order('created_at', { ascending: false })
 
   if (error) {
     console.error('Error fetching spots:', error)
+    return []
+  }
+
+  return data as SkateSpot[] || []
+}
+
+export async function getPendingSkateSpots(): Promise<SkateSpot[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('skate_spots')
+    .select(`
+      *,
+      user_profiles (
+        username
+      )
+    `)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching pending spots:', error)
+    return []
+  }
+
+  return data as SkateSpot[] || []
+}
+
+export async function getAllSpotsForAdmin(): Promise<SkateSpot[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('skate_spots')
+    .select(`
+      *,
+      user_profiles (
+        username
+      )
+    `)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching all spots:', error)
     return []
   }
 
@@ -252,6 +297,62 @@ export async function deleteSkateSpot(id: number) {
   // Revalidate pages
   revalidatePath('/spots')
   revalidatePath('/account/submissions')
+  
+  return { success: true }
+}
+
+export async function approveSkateSpot(id: number) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    throw new Error('Unauthorized: Must be logged in')
+  }
+
+  // Update status to approved
+  const { error } = await supabase
+    .from('skate_spots')
+    .update({ status: 'approved' })
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error approving spot:', error)
+    throw new Error('Failed to approve spot: ' + error.message)
+  }
+
+  // Revalidate pages
+  revalidatePath('/spots')
+  revalidatePath('/dashboard/spots')
+  
+  return { success: true }
+}
+
+export async function rejectSkateSpot(id: number) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    throw new Error('Unauthorized: Must be logged in')
+  }
+
+  // Update status to rejected
+  const { error } = await supabase
+    .from('skate_spots')
+    .update({ status: 'rejected' })
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error rejecting spot:', error)
+    throw new Error('Failed to reject spot: ' + error.message)
+  }
+
+  // Revalidate pages
+  revalidatePath('/spots')
+  revalidatePath('/dashboard/spots')
   
   return { success: true }
 }

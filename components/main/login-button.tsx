@@ -1,8 +1,8 @@
 import Link from 'next/link'
 
-import { isLoggedIn } from '@/lib/supabase/user-actions'
+import { getOrCreateUserProfile } from '@/lib/supabase/user-actions'
 
-import { LuLogIn, LuUser } from 'react-icons/lu'
+import { LuLayoutDashboard, LuLogIn, LuUser } from 'react-icons/lu'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 import { LogoutButton } from '../logout-button'
 import { Button } from '@/components/ui/button'
@@ -11,19 +11,19 @@ import { Button } from '@/components/ui/button'
 
 const LoginDropdownButton = async () => {
 
-    const loggedIn = await isLoggedIn()
+    const userProfile = await getOrCreateUserProfile()
   
 
   return (
     <>
-        {loggedIn ? (
+        {userProfile ? (
             <Popover>
                 <PopoverTrigger>
                     <div 
-                        className='w-10 h-10 flex items-center justify-center rounded-full bg-[#9A4312] text-white hover:bg-[#7a3410] transition-colors shadow-md hover:shadow-lg'
+                        className='w-10 h-10 flex items-center justify-center rounded-full bg-[#9A4312] text-white hover:bg-[#7a3410] transition-colors shadow-md hover:shadow-lg text-lg font-bold'
                         aria-label="User menu"
                     >
-                        <LuUser size={20}/>
+                        {userProfile.username?.[0]?.toUpperCase() || 'U'}
                     </div>
                 </PopoverTrigger>
                 <PopoverContent className='w-56 p-2' align='end'>
@@ -35,10 +35,20 @@ const LoginDropdownButton = async () => {
                             <LuUser size={16}/>
                             <span>View Account</span>
                         </Link>
+
+                        {userProfile.role === 'admin' && (
+                        <Link 
+                            href='/dashboard' 
+                            className='flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm  text-[#431b07] bg-blue-300 font-bold text-white hover:bg-[#FEE0AA] transition-colors'
+                        >
+                            <LuLayoutDashboard size={16}/>
+                            <span>Admin Dashboard</span>
+                        </Link>
+                        )}
                         
                         <div className='border-t border-gray-200 my-1' />
                         
-                        <LogoutButton />
+                    <LogoutButton />
                     </div>
                 </PopoverContent>
             </Popover>

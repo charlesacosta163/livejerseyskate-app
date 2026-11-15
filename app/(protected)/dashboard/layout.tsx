@@ -1,28 +1,44 @@
-export default function DashboardLayout({ children }: LayoutProps<"/">) {
-    return (
-      <div className="flex h-screen bg-white">
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { LuLayoutDashboard, LuMapPin, LuCalendar, LuLogOut, LuSettings, LuUser } from 'react-icons/lu'
+import { LogoutButton } from '@/components/logout-button'
+import Sidebar from '@/components/dashboard/sidebar'
+import Navbar from '@/components/dashboard/navbar'
 
-        <section id="sidebar" className="w-[250px] bg-white p-4">
-            This is the sidebar
-        </section>
+export default async function DashboardLayout({ children }: LayoutProps<"/">) {
+  const supabase = await createClient()
 
-        <div className="flex-1 flex flex-col overflow-y-auto">
+  const { data, error } = await supabase.auth.getClaims()
+  if (error || !data?.claims) {
+    redirect('/auth/login')
+  }
 
-            <header className="py-2 px-4">
-                This is the navbar
-            </header>
+  return (
+    <div className="flex h-screen bg-white">
 
-            <main className="flex-1 p-4 rounded-l-4xl bg-[#FFFAF0]">
-                {children}
-                
-            </main>
+      {/* Desktop Sidebar - Hidden on Mobile */}
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
 
-            <footer className="py-2 px-4">
-                2026 Studio Studios
-            </footer>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
 
-        </div>
+        <Navbar />
+        
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto bg-[#FFFAF0] p-4 md:p-6">
+          {children}
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-white border-t border-gray-200 px-4 md:px-6 py-3 text-center text-xs text-gray-500">
+          © 2026 LiveJerseySkate - Admin Dashboard
+        </footer>
 
       </div>
-    );
-  }
+
+    </div>
+  )
+}
