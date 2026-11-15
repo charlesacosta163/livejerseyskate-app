@@ -1,25 +1,45 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { LuArrowLeft, LuCalendar, LuMapPin, LuUser, LuClock } from 'react-icons/lu'
+import { LuArrowLeft, LuCalendar, LuMapPin, LuUser, LuClock, LuShare2, LuCheck } from 'react-icons/lu'
 import { mockEvents, eventTypes } from '@/lib/events-data'
 
-interface EventPageProps {
-  params: Promise<{ id: string }>
-}
-
-const EventDetailPage = async ({ params }: EventPageProps) => {
-  const { id } = await params
+const EventDetailPage = () => {
+  const params = useParams()
+  const id = params.id as string
+  const [copied, setCopied] = useState(false)
+  
   const event = mockEvents.find(e => e.id === Number(id))
 
   if (!event) {
-    notFound()
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500">Event not found</p>
+        <Link href="/events" className="text-[#9A4312] hover:underline mt-4 inline-block">
+          Back to Events
+        </Link>
+      </div>
+    )
   }
 
   const typeConfig = eventTypes[event.type]
+
+  // Copy link to clipboard
+  const handleShare = async () => {
+    try {
+      const url = window.location.href
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy:', error)
+    }
+  }
   
   // Format date
   const eventDate = new Date(event.date)
@@ -146,24 +166,27 @@ const EventDetailPage = async ({ params }: EventPageProps) => {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button 
-              className="flex-1 font-bold text-lg py-6"
-              style={{ 
-                backgroundColor: typeConfig.color,
-                color: 'white'
-              }}
-            >
-              Register for Event
-            </Button>
+          
             <Button 
               variant="outline" 
-              className="flex-1 font-bold text-lg py-6"
+              onClick={handleShare}
+              className="flex-1 font-bold text-lg py-6 flex items-center justify-center gap-2"
               style={{ 
                 borderColor: typeConfig.color,
                 color: typeConfig.color
               }}
             >
-              Share Event
+              {copied ? (
+                <>
+                  <LuCheck size={20} />
+                  Link Copied!
+                </>
+              ) : (
+                <>
+                  <LuShare2 size={20} />
+                  Share Event
+                </>
+              )}
             </Button>
           </div>
 
