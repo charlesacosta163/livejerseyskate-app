@@ -1,10 +1,11 @@
 
 import Link from 'next/link'
 import { LuMapPin, LuCalendar, LuClock, LuCheck } from 'react-icons/lu'
-import { getPendingSkateSpots } from '@/lib/actions'
+import { getPendingSkateSpots, getPendingEvents } from '@/lib/actions'
 
 export default async function DashboardPage() {
   const pendingSpots = await getPendingSkateSpots()
+  const pendingEvents = await getPendingEvents()
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -49,35 +50,39 @@ export default async function DashboardPage() {
           </div>
         </Link>
 
-        {/* Events Card (Coming Soon) */}
-        <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 opacity-60 cursor-not-allowed">
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-12 h-12 rounded-full bg-gray-300 text-white flex items-center justify-center">
-              <LuCalendar size={24} />
+        {/* Events Card */}
+        <Link href="/dashboard/events">
+          <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-[#8daaff] transition-all hover:shadow-lg cursor-pointer group">
+            <div className="flex items-start justify-between mb-4">
+              <div className="w-12 h-12 rounded-full bg-[#8daaff] text-white flex items-center justify-center group-hover:scale-110 transition-transform">
+                <LuCalendar size={24} />
+              </div>
+              {pendingEvents.length > 0 && (
+                <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  {pendingEvents.length} Pending
+                </span>
+              )}
             </div>
-            <span className="bg-gray-300 text-white text-xs font-bold px-3 py-1 rounded-full">
-              Coming Soon
-            </span>
-          </div>
-          
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Events</h3>
-          <p className="text-gray-600 text-sm mb-4">
-            Manage and moderate community event submissions (Feature coming soon)
-          </p>
-          
-          <div className="flex items-center gap-4 text-sm text-gray-500">
-            <div className="flex items-center gap-1">
-              <LuClock size={16} />
-              <span>Not available yet</span>
+            
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Events</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Review and moderate event submissions from the community
+            </p>
+            
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                <LuClock size={16} />
+                <span>{pendingEvents.length} pending review</span>
+              </div>
             </div>
-          </div>
 
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <span className="text-gray-400 font-semibold text-sm">
-              Coming Soon
-            </span>
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <span className="text-[#8daaff] font-semibold text-sm group-hover:underline">
+                Manage Events →
+              </span>
+            </div>
           </div>
-        </div>
+        </Link>
 
       </div>
 

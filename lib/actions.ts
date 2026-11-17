@@ -356,3 +356,281 @@ export async function rejectSkateSpot(id: number) {
   
   return { success: true }
 }
+
+export async function submitNewEvent(formData: FormData) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    redirect('/auth/login')
+  }
+
+  // Extract form data
+  const name = formData.get('name') as string
+  const description = formData.get('description') as string
+  const location = formData.get('location') as string
+  const date = formData.get('date') as string
+  const type = formData.get('type') as string
+
+  // Insert into database
+  const { data, error } = await supabase
+    .from('events')
+    .insert([
+      {
+        name,
+        description,
+        location,
+        date,
+        type,
+        created_by: user.id,
+        shop_id: null
+      }
+    ])
+    .select()
+
+  if (error) {
+    console.error('Error submitting event:', error)
+    throw new Error('Failed to submit event: ' + error.message)
+  }
+
+  // Revalidate the events page
+  revalidatePath('/events')
+  
+  // Redirect to events page
+  redirect('/events')
+}
+
+export async function getAllEvents() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('status', 'approved')
+    .order('date', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching events:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export async function getEventById(id: number) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error('Error fetching event:', error)
+    return null
+  }
+
+  return data
+}
+
+// Get user's event submissions
+export async function getUserEventSubmissions() {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('created_by', user.id)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching user events:', error)
+    return []
+  }
+
+  return data || []
+}
+
+// Update event
+export async function updateEvent(id: number, formData: FormData) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/auth/login')
+  }
+
+  // Verify ownership
+  const { data: event } = await supabase
+    .from('events')
+    .select('created_by')
+    .eq('id', id)
+    .single()
+
+  if (!event || event.created_by !== user.id) {
+    throw new Error('Unauthorized: You can only edit your own events')
+  }
+
+  const name = formData.get('name') as string
+  const description = formData.get('description') as string
+  const location = formData.get('location') as string
+  const date = formData.get('date') as string
+  const type = formData.get('type') as string
+
+  const { error } = await supabase
+    .from('events')
+    .update({
+      name,
+      description,
+      location,
+      date,
+      type,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error updating event:', error)
+    throw new Error('Failed to update event')
+  }
+
+  revalidatePath('/events')
+  revalidatePath(`/events/${id}`)
+  revalidatePath('/account/submissions')
+  redirect('/account/submissions')
+}
+
+// Delete event
+export async function deleteEvent(id: number) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized: Must be logged in')
+  }
+
+  // Verify ownership
+  const { data: event } = await supabase
+    .from('events')
+    .select('created_by')
+    .eq('id', id)
+    .single()
+
+  if (!event || event.created_by !== user.id) {
+    throw new Error('Unauthorized: You can only delete your own events')
+  }
+
+  const { error } = await supabase
+    .from('events')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error deleting event:', error)
+    throw new Error('Failed to delete event')
+  }
+
+  revalidatePath('/events')
+  revalidatePath('/account/submissions')
+}
+
+// Get pending events for admin
+export async function getPendingEvents() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching pending events:', error)
+    return []
+  }
+
+  return data || []
+}
+
+// Get all events for admin
+export async function getAllEventsForAdmin() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching all events:', error)
+    return []
+  }
+
+  return data || []
+}
+
+// Approve event
+export async function approveEvent(id: number) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized: Must be logged in')
+  }
+
+  // Update status to approved
+  const { error } = await supabase
+    .from('events')
+    .update({ status: 'approved' })
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error approving event:', error)
+    throw new Error('Failed to approve event')
+  }
+
+  revalidatePath('/dashboard/events')
+  revalidatePath('/events')
+}
+
+// Reject event
+export async function rejectEvent(id: number) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized: Must be logged in')
+  }
+
+  // Update status to rejected
+  const { error } = await supabase
+    .from('events')
+    .update({ status: 'rejected' })
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error rejecting event:', error)
+    throw new Error('Failed to reject event')
+  }
+
+  revalidatePath('/dashboard/events')
+  revalidatePath('/events')
+}

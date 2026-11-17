@@ -27,20 +27,21 @@ const Sidebar = () => {
      </Link>
 
      <Link 
+       href="/dashboard/events" 
+       className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors"
+     >
+       <LuCalendar size={20} />
+       <span className="font-medium">Events</span>
+     </Link>
+
+     <div className="border-t border-white/20 my-4" />
+
+     <Link 
        href="/account" 
        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors"
      >
        <LuUser size={20} />
        <span className="font-medium">Account</span>
-     </Link>
-
-     <Link 
-       href="/dashboard/events" 
-       className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors opacity-50 cursor-not-allowed"
-     >
-       <LuCalendar size={20} />
-       <span className="font-medium">Events</span>
-       <span className="ml-auto text-xs bg-white/20 px-2 py-0.5 rounded">Soon</span>
      </Link>
 
      <div className="border-t border-white/20 my-4" />

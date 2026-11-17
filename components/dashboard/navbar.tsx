@@ -53,21 +53,23 @@ const Navbar = () => {
                 </Link>
 
                 <Link 
+                  href="/dashboard/events" 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <LuCalendar size={18} />
+                  <span className="font-medium text-sm">Events</span>
+                </Link>
+
+                <div className="border-t border-white/20 my-2" />
+
+                <Link 
                   href="/account" 
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors"
                 >
                   <LuUser size={18} />
                   <span className="font-medium text-sm">Account</span>
-                </Link>
-
-                <Link 
-                  href="/dashboard/events" 
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors opacity-50 cursor-not-allowed"
-                >
-                  <LuCalendar size={18} />
-                  <span className="font-medium text-sm">Events</span>
-                  <span className="ml-auto text-xs bg-white/20 px-2 py-0.5 rounded">Soon</span>
                 </Link>
 
                 <div className="border-t border-white/20 my-2" />

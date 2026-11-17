@@ -37,7 +37,7 @@ const SpotsPage = async ({ searchParams }: SpotsPageProps) => {
               Submitted by our beloved community members.
             </p>
           </div>
-          <Link href="/spots/new"><Button className="bg-[#8daaff] text-white font-bold hover:bg-[#9A4312] hover:text-white">
+          <Link href="/spots/new"><Button className="bg-amber-500 text-white font-bold hover:bg-[#9A4312] hover:text-white">
             <LuPlus className="inline" /> New Spot{" "}
           </Button></Link>
         </div>

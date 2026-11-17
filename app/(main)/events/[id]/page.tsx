@@ -1,45 +1,27 @@
-'use client'
-
-import React, { useState } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { LuArrowLeft, LuCalendar, LuMapPin, LuUser, LuClock, LuShare2, LuCheck } from 'react-icons/lu'
-import { mockEvents, eventTypes } from '@/lib/events-data'
+import { LuArrowLeft, LuCalendar, LuMapPin, LuUser, LuClock } from 'react-icons/lu'
+import { eventTypes } from '@/lib/events-data'
+import { getEventById } from '@/lib/actions'
+import { notFound } from 'next/navigation'
+import ShareButton from '@/components/share-button'
 
-const EventDetailPage = () => {
-  const params = useParams()
-  const id = params.id as string
-  const [copied, setCopied] = useState(false)
-  
-  const event = mockEvents.find(e => e.id === Number(id))
+interface EventDetailPageProps {
+  params: Promise<{ id: string }>
+}
+
+const EventDetailPage = async ({ params }: EventDetailPageProps) => {
+  const { id } = await params
+  const event = await getEventById(Number(id))
 
   if (!event) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Event not found</p>
-        <Link href="/events" className="text-[#9A4312] hover:underline mt-4 inline-block">
-          Back to Events
-        </Link>
-      </div>
-    )
+    notFound()
   }
 
-  const typeConfig = eventTypes[event.type]
-
-  // Copy link to clipboard
-  const handleShare = async () => {
-    try {
-      const url = window.location.href
-      await navigator.clipboard.writeText(url)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (error) {
-      console.error('Failed to copy:', error)
-    }
-  }
+  const typeConfig = eventTypes[event.type as keyof typeof eventTypes]
   
   // Format date
   const eventDate = new Date(event.date)
@@ -150,7 +132,7 @@ const EventDetailPage = () => {
           </div>
 
           {/* Additional Info */}
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          {/* <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <h3 className="text-sm font-bold text-gray-700 mb-2">Event Information</h3>
             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
               <div className="flex items-center gap-2">
@@ -162,32 +144,20 @@ const EventDetailPage = () => {
                 <span>Check-in starts 15 minutes before</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3">
-          
-            <Button 
-              variant="outline" 
-              onClick={handleShare}
-              className="flex-1 font-bold text-lg py-6 flex items-center justify-center gap-2"
+            {/* <Button 
+              className="flex-1 font-bold text-lg py-6"
               style={{ 
-                borderColor: typeConfig.color,
-                color: typeConfig.color
+                backgroundColor: typeConfig.color,
+                color: 'white'
               }}
             >
-              {copied ? (
-                <>
-                  <LuCheck size={20} />
-                  Link Copied!
-                </>
-              ) : (
-                <>
-                  <LuShare2 size={20} />
-                  Share Event
-                </>
-              )}
-            </Button>
+              Register for Event
+            </Button> */}
+            <ShareButton color={typeConfig.color} />
           </div>
 
           {/* Footer Info */}
